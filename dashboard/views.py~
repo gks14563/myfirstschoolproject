@@ -1,0 +1,281 @@
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.template import loader
+from django.contrib.auth import login, authenticate
+from .forms import SignUpForm
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from .tokens import account_activation_token
+from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
+from .forms import CountryForm
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from .decorators import isKYCverified
+from .models import KYCdata, keychain
+from .forms import KYCForm
+from django.views.decorators.cache import never_cache
+from django.views.generic import FormView, TemplateView
+from two_factor.views import OTPRequiredMixin
+from two_factor.views.utils import class_view_decorator
+from coinmarketcap import Market
+from pycoin.cmds import ku
+from pycoin.tx import tx_utils as txu
+from pycoin.cmds import tx
+from pycoin.version import version
+from django.http import JsonResponse
+import math
+import decimal
+import os
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def admin_image(request):
+    user_pan = KYCdata.objects.values_list('PAN', flat=True)
+    user_aadhaar = KYCdata.objects.values_list('aadhaar', flat=True)
+    usern = KYCdata.objects.values_list('user', flat=True)
+    return render(request,'dashboard/admin_image_view.html',{"user_pan":user_pan,"user_aadhaar":user_aadhaar,"usern":usern})
+    
+def index(request):
+    ip = get_client_ip(request)
+    coinmarketcap = Market()
+    coin = ["bitcoin","litecoin","dash"]
+    curr = ["usd","inr","eur"]
+    result_list = []
+    for co in coin:
+        for cur in curr:
+            response = coinmarketcap.ticker(co,convert=cur)
+            if co == 'bitcoin':
+                 if cur == 'usd':
+                      result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(10000.00/65.02))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(10000.00/65.02))*10/10)} #dollor value
+                 elif cur == 'eur':
+                       result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(10000.00/80.35))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(10000.00/80.35))*10/10)} #euro value
+                 elif cur == 'inr':
+                       result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(10000.00))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(10000.00))*10/10)}
+            else:
+                 if cur == 'usd':
+                      result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(1000.00/65.02))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(1000.00/65.02))*10/10)}
+                 elif cur == 'eur':
+                       result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(1000.00/80.35))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(1000.00/80.35))*10/10)}
+                 elif cur == 'inr':
+                       result = {"coin":response[0]["symbol"],"currency":cur.upper(),"buyrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])+decimal.Decimal(1000.00))*10/10),"sellrate":math.ceil((decimal.Decimal(response[0]["price_%s"%(cur)])-decimal.Decimal(1000.00))*10/10)}
+                                              
+            result_list.append(result)
+    return render(request, 'dashboard/index.html',{"result_list":result_list,"ip":ip})
+               
+def blog(request):
+    return render(request, 'dashboard/blog.html')
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active=False
+            form.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your Rubit account.'
+            message = render_to_string('dashboard/acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+                'token':account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
+            return render(request,'dashboard/emailsendpop.html')
+    else:
+        form = SignUpForm()
+    return render(request, 'dashboard/register.html', {'form': form})
+    
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return render(request,'dashboard/conf_emailpop.html')
+    else:
+        return HttpResponse('Activation link is invalid!')    
+
+
+def country(request):
+    if request.method == 'POST':
+        form = CountryForm(request.POST)
+        if form.is_valid():
+            countries = form.cleaned_data.get('countries')
+            # do something with your results
+    else:
+        form = CountryForm
+
+    return render(request,'dashboard/country.html', {'form':form })      
+
+
+def kyc_upload(request):
+    try:
+        profile = request.user.kycdata
+    except KYCdata.DoesNotExist:
+        profile = KYCdata(user=request.user)
+    if request.method == 'POST':
+        form = KYCForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return render(request, 'dashboard/home.html', {
+                'form': form
+            })
+    else:
+        form = KYCForm()
+    return render(request, 'dashboard/kyc_form_upload.html', {
+        'form': form
+    })
+
+
+def check_balance(spender_address, network):
+    spends = tx.spendables_for_address(spender_address, network)
+    try:
+        balance = spends[0].coin_value
+    except:
+        if len(spends) == 0:
+            return 0,0
+    print("Balance in the account %s --> %s satoshis" % (spender_address, balance))
+    return balance, spends
+
+
+def sendCryptos(username, recipient_address, network, value):
+    userdetails = keychain.objects.filter(username=username, network=network)[0]
+    spender_address = userdetails.coinAddress
+    private_key = userdetails.private_key
+    to_send = value
+    miner_fee = 12000
+    comm_amount_in_satoshis = 500
+    comm_wallet_address = ""
+    if network == "LTC":
+        miner_fee = 20000
+        comm_amount_in_satoshis = 40000
+        comm_wallet_address = ""
+    elif network == "DASH":
+        miner_fee = 100000
+        comm_amount_in_satoshis = 250000
+        comm_wallet_address = ""
+    PYCOIN_AGENT = 'pycoin/%s' % version
+
+    balance, spends = check_balance(spender_address, network)
+
+    send_back = balance - miner_fee - comm_amount_in_satoshis - to_send
+
+    if send_back > 0:
+        transaction = txu.create_tx(spends, [(recipient_address, to_send), (spender_address, send_back), \
+                                             (comm_wallet_address, comm_amount_in_satoshis)])
+        txu.sign_tx(transaction, wifs=[private_key])
+
+        hex_of_trans = transaction.as_hex()
+
+        url = "https://api.blockcypher.com/v1/" + network.lower() + "/main/txs/push"
+        payload = {"tx": hex_of_trans}
+        headers = {'content-type': 'application/json', 'User-agent': PYCOIN_AGENT}
+        result = requests.post(url, data=json.dumps(payload).encode("utf8"), headers=headers)
+        print(result.content.decode("utf8"))
+        send_receives.objects.create(username=username, network=network, type = 'send',
+                                     other_user = recipient_address, value = to_send)
+        return result.content.decode("utf8")
+
+    else:
+        print("Not enough balance")
+        return 'Not enough balance'
+
+
+def send(request):
+    if request.user.username:
+        if request.method == 'POST':
+            # print("post")
+            try:
+                data=request.POST
+                value= int(float(data['value'])*100000000)
+                recipient_address = data['recp_addr']
+                username = request.user.username
+                network = data['network']
+                print("######## Send Attempted ##########")
+                print(value)
+                print(recipient_address)
+                print(username)
+                print(network)
+                print('Output :')
+                output = sendCryptos(username, recipient_address, network, value)
+                print("#################################")
+                return HttpResponse('<html><h1>Send Attempted. '+str(output)+'</h1></html>')
+            except Exception as e:
+                return redirect('dashboard')
+
+        else:
+            print("not post")
+            return redirect('dashboard')
+
+
+@isKYCverified
+def dashboard(request):
+    user = request.user
+    user_obj = KYCdata.objects.get(user=user)
+    if not user_obj.key_generated:
+        networks = 'BTC','LTC','DASH'
+        for network in networks:
+            randomkey = ku.BIP32Node.from_master_secret(os.urandom(64), netcode=network)
+            address = randomkey.address()
+            pub_x, pub_y = randomkey.public_pair()
+            priv = randomkey.wif()
+            sec = randomkey.sec_as_hex()
+            keychain.objects.create(username=user.username, network=network, public_key_x=pub_x, public_key_y=pub_y, \
+                                    private_key=priv, sec=sec, coinAddress=address)
+            user_obj.key_generated = True
+            user_obj.save()
+
+            print('keychain created for user :' + user.username + ', on network: ' + network)
+    
+    username = request.user.username
+    keys = keychain.objects.filter(username=username)
+    ltc_key = keys.get(network = 'LTC').coinAddress
+    btc_key = keys.get(network='BTC').coinAddress
+    dash_key = keys.get(network='DASH').coinAddress
+
+    btc_balance = check_balance(btc_key, 'BTC')
+    ltc_balance = check_balance(ltc_key, 'LTC')
+    dash_balance = check_balance(dash_key, 'DASH')
+
+    # print('BTC Balance and Spends: %d, %d'%(btc_balance[0],ltc_balance[1]))
+    # print('LTC Balance and Spends: %d, %d'%(ltc_balance[0],ltc_balance[1]))
+    # print('DASH Balance and Spends: %d, %d'%(dash_balance[0],ltc_balance[1]))
+    
+    data = {
+    "ltc_key" : ltc_key,
+    "btc_key" : btc_key,
+    "dash_key" : dash_key,
+    "btc_balance" : btc_balance[0]/100000000,
+    "ltc_balance" : ltc_balance[0]/100000000,
+    "dash_balance" : dash_balance[0]/100000000,
+    }
+    return render(request, 'dashboard/dashboard.html', data)
+
+@isKYCverified
+def two_factor(request): 
+    return redirect('account/two_factor')
+
+@class_view_decorator(never_cache)
+class ExampleSecretView(OTPRequiredMixin, TemplateView):
+    template_name = 'secret.html'
+
+def sampleview(request):
+    return redirect('sampleview.html')   
+

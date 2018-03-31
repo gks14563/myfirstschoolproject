@@ -1,0 +1,25 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+<style type="text/css">
+
+  </style>
+  <div style="font-size: 20px;">
+{% block content %}
+  <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
+  <div style="margin-top: 20px; ">
+  <p style="font-size: 20px; text-align: left;">{% blocktrans %}You are about to disable two-factor authentication. This
+    compromises your account security, are you sure?{% endblocktrans %}</p>
+  </div>
+  <style type="text/css">input[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+  opacity: 1!important;
+  width: 15px;height: 15px;padding: 5px;margin-left: 5px;
+}
+  </style>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-danger"
+            type="submit" title="Click on Yes,I am sure to proceed">{% trans "Disable" %}</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+
+
+
+  
+  
+  <div class="w3-container" >
+<div id="particles-js">
+
+<p style="margin-top:2%" class="w3-center w3-large w3-hide-small "><b style="color:#ffffff;">Upload KYC Details</b></p>
+ <div class="section-content w3-container w3-hide-small">
+  <form method="post" class=" animate" enctype="multipart/form-data">
+    <div class="imgcontainer">
+
+
+    </div>
+    
+    <div class="container">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" style="">Upload</button>
+      <label>
+      </label>
+      
+    </div>
+  </form>
+</div>
+
+<p style="margin-top:2%" class="w3-center w3-large w3-hide-medium w3-hide-large "><b style="color:#ffffff;">Upload KYC Details</b></p>
+<div class="section1 w3-hide-medium w3-hide-large">
+<form method="post" class=" animate" enctype="multipart/form-data">
+    <div class="imgcontainer">
+
+
+    </div>
+    
+    <div class="container">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" style="">Upload</button>
+      <label>
+      </label>
+    </div>
+  </form>
+</div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script type="text/javascript">
+  function disableSubmit() {
+  document.getElementById("submitbtn").disabled = true;
+ }
+
+  function activateButton(element) {
+
+      if(element.checked) {
+        document.getElementById("submitbtn").disabled = false;
+       }
+       else  {
+        document.getElementById("submitbtn").disabled = true;
+      }
+
+  }
+</script>
+
+
+      
+  </div>
+  
+
+  </div>
+
+<!--here-->
+
+<script>
+  particlesJS.load('particles-js',
+    '../static/index_files/particles.json',
+    function(){
+      console.log('particles.json loaded');
+    });
+  function myFunction() {
+    var x = document.getElementById("demo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+
+
+{% endblock %}

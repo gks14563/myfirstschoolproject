@@ -1,0 +1,1345 @@
+<!--include partials/header -->
+
+<!-- PLEASE BARE WITH THE UNORGANISED CODE. I will refactor it anytime soon -->
+<!DOCTYPE html>
+<html>
+{% load static %}   
+  
+<head>
+  <meta charset="utf-8">
+  <title>KITISU</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <style type="text/css">
+  @font-face {
+   font-family: Open_sans;
+   src: url('https://fonts.google.com/specimen/Open+Sans');
+   font-weight: bold;
+}
+a:hover {
+  text-decoration: none !important;
+}
+  .wrapper {
+      padding-left: 200px;
+  }
+  @media screen and (max-height: 768px) {
+    .main_body{
+      overflow-x: hidden !important;
+    }
+    
+
+  
+  }
+  @media screen and (min-width: 993px) {
+     #res11{
+      display: none;
+    }
+  }
+  @media screen and (max-width: 992px) {
+    #res1 {
+      display: none;
+    }
+    #res5 {
+      display: none;
+    }
+    #res4 {
+      display: none;
+    }
+    #res8{
+      display: none;
+    }
+    #res9{
+      display: none;
+    }
+    #res10{
+      display: none;
+    }
+   
+  
+    body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.fa-bars{
+  font-size: 25px;
+}
+
+footer{
+  margin-top: 20px;
+}
+
+.story-text{
+  height: 120px;
+}
+
+.dash-status{
+  text-transform: capitalize;
+}
+
+#delete-form{
+  display: inline;
+}
+
+
+  </style>
+</head>
+
+<body style="overflow-x: hidden;">
+  <div>
+  <nav class="orange darken-2" >
+    <div class="" style="width: 100%;">
+      <div class="nav-wrapper">
+        <div class="col-md-1"></div>
+        <a href="{% url 'dashboard' %}" class="brand-logo left">KITISU</a>
+        <!--# button collapse will collapse the button on small screens but show-on-large shows it always -->
+        <!-- <a href="#" data-activates="main-menu" class="button-collapse show-on-large"><i class="fa fa-bars"></i></a> -->
+        <!--# Right Side NavBar which hides the content on small screen -->
+        <div class="right-align" >
+          <ul class="right hide-on-small-only">
+            <li><a href="{% url 'logout' %}"  style="font-size: 15px;"><i class="fa fa-sign-out"></i>Signed In as {{ user.username }}</a></li>
+          </ul>
+          <ul class="right hide-on-small-only">
+          <li><a href="#"><i class="material-icons">help</i></a></li>
+          </ul>
+          <ul class="right hide-on-small-only">
+            <a class="dropdown-button" href="#!" data-activates="dropdown1" style="font-size: 15px">Accounts<i class="material-icons right">arrow_drop_down</i></a></li>
+
+
+                <ul id="dropdown1" class="dropdown-content">
+                  <li><a href="{% url 'password_change' %}" class="orange darken-2" style="color:white">Change Password</a></li>
+                  <li><a href="#" class="orange darken-2" style="color:white" id="transactionss">Trade History</a></li>
+                  <li><a href="#" class="orange darken-2" style="color:white">Passbook</a></li>
+                </ul>
+          </ul>
+            
+          <ul class="right hide-on-small-only">
+           <div style="">
+           <div class="drop" >
+            <div class="option active " id="inr" style=" position: relative;" data-value="INR">
+              INR
+            </div>
+            <div class="option" id="dollar" style=" position: relative;" data-value="DOLLAR">
+              DOLLAR
+            </div>
+            <div class="option" id="euro" style=" position: relative;" data-value="EURO">
+              EURO
+            </div> 
+          </div> 
+           </div> 
+        </ul>
+        <ul class="right hide-on-small-only" style="color: white;">
+          <li><a href="{% url 'two_factor'%}" style="font-size: 15px;"> two factor auth</i></a></li>
+          </ul>
+        </div>
+        <!--# Side Menu -->
+        <ul class="side-nav" id="main-menu">
+          <li>
+          <a class="btn orange darken-2" href="#">Market</a>
+          </li>
+            <li>
+              <a href="/stories"><i class="fa fa-book"></i>Dashboard</a>
+            </li>
+            <li class="divider"></li>
+              <li>
+                <a href="/dashboard"><i class="fa fa-cog"></i>Buy/Sell</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="/stories/my"><i class="fa fa-user"></i>Accounts</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="/stories/my"><i class="fa fa-user"></i>Settings</a>
+              </li>
+              <li class="divider"></li>
+              <!-- <li>
+              <a class="btn orange darken-2" href="#">Settings</a>
+              </li> -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- <nav class="orange darken-2">
+    <div class="container">
+      <div class="nav-wrapper">
+  <div class="categories-wrapper af lighten-1">
+      <div class="categories-container">
+        <ul class="categories db">
+          <li><a href="#all"><strong>Transaction</strong></a></li>
+          <li><a href="#polygon"><strong>Buy/Sell</strong></a></li>
+          <li><a href="#bigbang"><strong>Accounts</strong></a></li>
+          <li><a href="#sacred"><strong>Settings</strong></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+  </nav> -->
+  <!-- <main>
+  <div class="container"> -->
+
+<style>  
+  body {
+    zoom: 0.80; 
+ }
+  p{
+    text-align: center;
+  }
+
+  hr{
+    width:45%;
+    color: white;
+  }
+
+  .button {
+    display: inline-block;
+    border-radius: 1px;
+    background-color: #e65100;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 16px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 150px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 9px;
+  }
+
+  .button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\21FE';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.7s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.tab {
+    float: left;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    width: 30%;
+    height: 300px;
+}
+.tab button {
+    display: block;
+    background-color: inherit;
+    color: black;
+    padding: 22px 16px;
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 17px;
+}
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    float: left;
+    padding: 0px 12px;
+    border: 1px solid #ccc;
+    width: 70%;
+    border-left: none;
+    height: 300px;
+}
+
+.sidenav {
+    height: 60%;
+    width: 23%;
+    position: fixed;
+    z-index: 1;
+    top: 65px;
+    left: 0;
+    background-color: black;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.main {
+    margin-left: 20%; /* Same as the width of the sidenav */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+.vertical-menu {
+    width: 20%;
+    padding-top: 200px;
+}
+
+.vertical-menu a {
+    background-color: #eee;
+    color: black;
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+}
+
+.vertical-menu a:hover {
+    background-color: #ccc;
+}
+
+.vertical-menu a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+.row .col {
+    padding-left: 0;
+
+
+}
+.row {
+	margin-left: 0 !important;
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.inner1{
+  color: rgba(38, 50, 56, 0.38);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: left;
+  font-weight: bold;
+  margin: 0px;
+}
+.inner2{
+  color: rgba(38, 50, 56, 0.38);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: left;
+  font-weight: 400;
+  margin: 0px;
+}
+.btnnew{
+  position: relative;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px -1px 0px 0px inset;
+    cursor: pointer;
+    background-color: rgb(119, 135, 242);
+    user-select: none;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    text-align: left;
+    border-radius: 4px;
+    border-width: 0px;
+    border-style: initial;
+    border-color: initial;
+    border-image: initial;
+    outline: 0px;
+    margin: 0px;
+}
+.innerbtn{
+      color: rgb(255, 255, 255);
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: 0.4px;
+    width: 100%;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: bold;
+}
+.modal-content-buy{
+  height: 300px; 
+} 
+.inputtext{
+   border: 0px ; 
+
+}
+.money{
+  margin-bottom: 10px;
+}
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: pfs-bold;
+  src: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/142996/PFSquareSansPro-Bold.otf");
+} 
+
+.drop {
+  text-align: center;
+  width: 5em;
+  margin:  auto;
+  font-family: pfs-bold;
+  color: white;
+  text-transform: uppercase;
+  position: relative;
+  -webkit-transition: width 0.5s;
+  transition: width 0.5s; 
+}
+.drop .option {
+  padding: 0.05em;
+  cursor: pointer;
+  background-color: #f57c00;
+}
+.drop .option:not(.active) {
+  display: none;
+  opacity: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+.drop.visible {
+  -webkit-animation: bounce 1s;
+          animation: bounce 1s;
+  width: 5em;
+}
+.drop.visible:before, .drop.visible:after {
+  border-color: #f57c00;
+}
+.drop.visible:before {
+  opacity: 0;
+}
+.drop.visible:after {
+  opacity: 1;
+}
+.drop.visible .option {
+  color: #fff;
+  display: block;
+}
+.drop.opacity .option {
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+  opacity: 1;
+}
+.drop.opacity .option:nth-child(0) {
+  -webkit-transition: opacity 0.5s 0s, -webkit-transform 0.5s 0s;
+  transition: opacity 0.5s 0s, -webkit-transform 0.5s 0s;
+  transition: opacity 0.5s 0s, transform 0.5s 0s;
+  transition: opacity 0.5s 0s, transform 0.5s 0s, -webkit-transform 0.5s 0s;
+}
+.drop.opacity .option:nth-child(1) {
+  -webkit-transition: opacity 0.5s 0.1s, -webkit-transform 0.5s 0.1s;
+  transition: opacity 0.5s 0.1s, -webkit-transform 0.5s 0.1s;
+  transition: opacity 0.5s 0.1s, transform 0.5s 0.1s;
+  transition: opacity 0.5s 0.1s, transform 0.5s 0.1s, -webkit-transform 0.5s 0.1s;
+}
+.drop.opacity .option:nth-child(2) {
+  -webkit-transition: opacity 0.5s 0.2s, -webkit-transform 0.5s 0.2s;
+  transition: opacity 0.5s 0.2s, -webkit-transform 0.5s 0.2s;
+  transition: opacity 0.5s 0.2s, transform 0.5s 0.2s;
+  transition: opacity 0.5s 0.2s, transform 0.5s 0.2s, -webkit-transform 0.5s 0.2s;
+}
+.drop.opacity .option:nth-child(3) {
+  -webkit-transition: opacity 0.5s 0.3s, -webkit-transform 0.5s 0.3s;
+  transition: opacity 0.5s 0.3s, -webkit-transform 0.5s 0.3s;
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s, -webkit-transform 0.5s 0.3s;
+}
+.drop.opacity .option:nth-child(4) {
+  -webkit-transition: opacity 0.5s 0.4s, -webkit-transform 0.5s 0.4s;
+  transition: opacity 0.5s 0.4s, -webkit-transform 0.5s 0.4s;
+  transition: opacity 0.5s 0.4s, transform 0.5s 0.4s;
+  transition: opacity 0.5s 0.4s, transform 0.5s 0.4s, -webkit-transform 0.5s 0.4s;
+}  
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.imgup:hover{
+  cursor: pointer;
+}
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+ 
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown .dropbtn {
+    font-size: 16px;    
+    border: none;
+    outline: none;
+    color: white; 
+    background-color: #f57c00;
+    font-family: inherit;
+    margin: 0;
+}
+ 
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f57c00;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+ 
+ ckground-color: #3e8e41;
+}
+</style>
+
+<div class="row" style="padding: 20px;height: 100%" id="#abcd">
+
+  <div style="padding-top: 30px" class="vertical-menu col s2">
+    <ul class="collapsible" data-collapsible="accordion">
+  <li>
+    <div class="collapsible-header" id="bitcoin">
+      <img style="margin-top:0px; margin-right:5px" src="http://logok.org/wp-content/uploads/2016/10/Bitcoin-Logo-640x480.png"  width="25" height="25">
+      
+      <span>Bitcoin</span></div>
+    <div class="collapsible-body"><p>Bitcoin is a cryptocurrency and worldwide payment system.</p></div>
+  </li>
+  <li>
+    <div class="collapsible-header" id="litecoin">
+      <img style="margin-top:0px; margin-right:5px" src="{% static 'images/litecoin.png' %}"  width="25" height="25">
+      
+      <span>Litecoin</span></div>
+    <div class="collapsible-body"><p>Litecoin (LTC or Ł[3]) is a peer-to-peer cryptocurrency and open source software project released under the MIT/X11 license.</p></div>
+  </li>
+  <li>
+    <div class="collapsible-header" id="dash">
+
+      <img style="margin-top:0px; margin-right:5px;" src="{% static 'images/dash.png' %}"  width="25" height="25">
+      
+      <span>Dash</span></div>
+    <div class="collapsible-body"><p>Dash is an open source peer-to-peer cryptocurrency.</p></div>
+  </li>
+  <li>
+    <div class="collapsible-header" id="transaction">
+
+      
+      <span>Transactions</span></div>
+    
+  </li>
+</ul>
+
+  </div>
+<div class="mainbodycontent">
+  <div class="main col s8">
+    <div class="left-align" style="padding-left: 120px;">
+    <img style="width:20%;padding-top:20px; margin-left: 10%; " class="bitcoin"  src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Bitcoin_logo.svg/2000px-Bitcoin_logo.svg.png">
+    <img style="width:20%;padding-top:20px; margin-left: 10%; display: none;" class="litecoin"  src="http://www.stickpng.com/assets/images/5a521f6c2f93c7a8d5137fca.png">
+    <img style="width:20%;padding-top:20px; margin-left: 10%; display: none;" class="dash"  src="https://www.dash.org/assets/img/graphics/dash_logo_f.png"><span class="bitcoin" style="font-family: 'Open_sans'"><h3 align="center">BTC  = {{ btc_balance }}</h3></span>
+      <span class="litecoin" style="display: none;font-family: 'Open_sans'"><h3 align="center">LTC  = {{ ltc_balance }}</h3></span>
+      <span class="dash" style="display: none;font-family: 'Open_sans'"><h3 align="center">DASH  = {{ dash_balance }}</h3></span>
+    
+    </div>
+
+    <div class="center-align" class="bitcoin" style="padding-left: 120px;"> 
+      <div  class=" " style="margin-left:-100px;height: 70%; ">
+      <script type="text/javascript">
+
+
+baseUrl = "https://widgets.cryptocompare.com/";
+var scripts = document.getElementsByTagName("script");
+var embedder = scripts[ scripts.length - 1 ];
+var cccTheme = {"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{"background":"#000","color":"#FFF"},"Followers":{"background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{"priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{"fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{"background":"#000","color":"#999"}};
+(function (){
+var appName = encodeURIComponent(window.location.hostname);
+if(appName==""){appName="local";}
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.async = true;
+var theUrl = baseUrl+'serve/v1/coin/chart?fsym=BTC&tsym=INR';
+s.src = theUrl + ( theUrl.indexOf("?") >= 0 ? "&" : "?") + "app=" + appName;
+embedder.parentNode.appendChild(s);
+})();
+
+</script>
+</div> 
+      <!-- <img style="width: 90%" src="https://datavizcatalogue.com/methods/images/top_images/area_graph.png"  width="900"> -->
+    </div>
+    <div class="center-align" style="display: none;" class="litecoin">
+    <div  class=" " style="margin-left:-100px;height: 70%; ">
+      <script type="text/javascript">
+
+
+baseUrl = "https://widgets.cryptocompare.com/";
+var scripts = document.getElementsByTagName("script");
+var embedder = scripts[ scripts.length - 1 ];
+var cccTheme = {"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{"background":"#000","color":"#FFF"},"Followers":{"background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{"priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{"fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{"background":"#000","color":"#999"}};
+(function (){
+var appName = encodeURIComponent(window.location.hostname);
+if(appName==""){appName="local";}
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.async = true;
+var theUrl = baseUrl+'serve/v1/coin/chart?fsym=LTC&tsym=INR';
+s.src = theUrl + ( theUrl.indexOf("?") >= 0 ? "&" : "?") + "app=" + appName;
+embedder.parentNode.appendChild(s);
+})();
+
+</script>
+</div>
+    </div>
+    <div class="center-align" style="display: none;" class="dash">
+    <div  class=" " style="margin-left:-100px;height: 70%; ">
+     <script type="text/javascript">
+
+
+baseUrl = "https://widgets.cryptocompare.com/";
+var scripts = document.getElementsByTagName("script");
+var embedder = scripts[ scripts.length - 1 ];
+var cccTheme = {"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{"background":"#000","color":"#FFF"},"Followers":{"background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{"priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{"fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{"background":"#000","color":"#999"}};
+(function (){
+var appName = encodeURIComponent(window.location.hostname);
+if(appName==""){appName="local";}
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.async = true;
+var theUrl = baseUrl+'serve/v1/coin/chart?fsym=DASH&tsym=INR';
+s.src = theUrl + ( theUrl.indexOf("?") >= 0 ? "&" : "?") + "app=" + appName;
+embedder.parentNode.appendChild(s);
+})();
+
+</script></div>
+    </div>
+    <br>
+    <div class="row" style="padding-left:140px">
+      <div class="col" style="margin-right:200px;">
+        <h5 style="text-align: center;
+        margin-top: 0">₹ 544,777</h5>
+        <button class="button myBtn" id="buybtn" style="vertical-align:middle"  data-toggle="modal" data-target="#buyModal"><span> Buy </span></button>
+      </div>
+       
+
+        <div id="buyModal" class="modal fade" style="background:transparent;box-shadow: none !important;-webkit-box-shadow:none !important;-moz-box-shadow:none !important;">
+
+          <div class="modal-dialog" >
+          <!-- Modal Buy -->
+          <div class="modal-content-buy modal-content" style="width: 400px;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <p>BUY</p>
+            <div class="buydivmod">
+              <div class="coin col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 20px">
+                  <p class="inner2" style="width: 50px;">
+                    <span class="inr">INR</span>
+                    <span class="dollar" style="display: none;">DOLLAR</span>
+                    <span class="euro" style="display: none;">EURO</span> 
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px ; margin: 0px;color: #000000" class="inputtext" name=""  placeholder="0.0"  >
+                </div>
+              </div>  
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 10px;">
+                  <p class="inner1" style="width: 50px;">AMOUNT</p>
+                  <p class="inner2" style="width: 50px;">
+                    <span class="bitcoin">BITCOIN</span>
+                    <span class="litecoin" style="display: none;">LITECOIN</span>
+                    <span class="dash" style="display: none;">DASH</span> 
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px #dfdcdb; margin: 0px;color: #000000" class="inputtext" id="buyamt" name="" placeholder="0.0"  >
+                </div>
+              </div>  
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline;  margin-top: 10px;">
+                  <p class="inner1" style="width: 50px;  ">TOTAL</p>
+                  <p class="inner2" style="width: 50px; ">
+                    <span class="inr">INR</span>
+                    <span class="dollar" style="display: none;">DOLLAR</span>
+                    <span class="euro" style="display: none;">EURO</span> 
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px ; margin: 0px;color: #000000" class="inputtext" id="buytotal" name="" placeholder="0.0" disabled>
+                </div>
+              </div>  
+              <button class="btnnew" height="40px" type="submit"><p class="sc-bwzfXH myXmC" color="#ffffff">Place  Order</p></button>
+            </div>
+          </div>
+        </div>
+        </div>
+        
+      <div class="col" style="margin-left: 100px;font-family: 'Open_sans'">
+        <h5 style="text-align: center;
+        margin-top: 0">₹ 544,777</h5>
+        <button class="button myBtn" id="sellBtn" style="vertical-align:middle" data-toggle="modal" data-target="#sellModal"><span>Sell </span> </button></div>
+    </div>
+    <style type="text/css">
+      .inner1 {
+        text-decoration: bold;
+        color: #000000;
+        font-size: 12px;
+      }
+       .inner2 {
+        text-decoration: bold;
+        color: #000000;
+        font-size: 12px;
+      }
+       .bitcoin {
+        text-decoration: bold;
+        color: #000000;
+        font-size: 12px;
+      }
+       .litecoin {
+        text-decoration: bold;
+        color: #000000;
+        font-size: 12px;
+      }
+      .dash{
+
+        text-decoration: bold;
+        color: #000000; 
+        font-size: 12px;
+      }
+    </style>
+          <!-- Modal Sell -->
+        <div id="sellModal" class="modal fade" style="background:transparent;box-shadow: none !important;-webkit-box-shadow:none !important;-moz-box-shadow:nonw !important;" >
+          <div class="modal-content-sell modal-content" style="width: 400px;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <p>SELL</p>
+            <div class="buydivmod">
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 20px">
+                  <p class="inner2" style="width: 50px;;">
+                    <span class="inr">INR</span>
+                    <span class="dollar" style="display: none;">DOLLAR</span>
+                    <span class="euro" style="display: none;">EURO</span> 
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px ; margin: 0px;color: #000000" class="inputtext" name="" placeholder="0.0" >
+                </div>
+              </div>  
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 10px;">
+                  <p class="inner1" style="width: 50px;">AMOUNT</p>
+                  <p class="inner2" style="width: 50px; ">
+                    <span class="bitcoin">BITCOIN</span>
+                    <span class="litecoin" style="display: none;">LITECOIN</span>
+                    <span class="dash" style="display: none;">DASH</span> 
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px #dfdcdb; margin: 0px;color: #000000" class="inputtext" id="sellamt" name="" placeholder="0.0" >
+                </div>
+              </div>  
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline;  margin-top: 10px;">
+                  <p class="inner1" style="width: 50px;  ">TOTAL</p>
+                  <p class="inner2" style="width: 50px; ">
+                    <span class="inr">INR</span>
+                    <span class="dollar" style="display: none;">DOLLAR</span>
+                    <span class="euro" style="display: none;">EURO</span> 
+                    </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px ; margin: 0px" class="inputtext" id="sellamt" name="" placeholder="0.0" disabled>
+                </div>
+              </div>  
+              <button class="btnnew" height="40px" type="submit"><p class="sc-bwzfXH myXmC" style="color:#ffffff">Place  Order</p></button>
+            </div>
+          </div>
+      </div>
+    <div class="row" style="padding-left:240px; padding-top:20px" >
+      <div class="col imgup " style="margin-right:200px">
+        <div style="text-align: center;" data-toggle="modal" data-target="#sendModal" >
+          <img class="Btn" id="sendBtn" style="vertical-align:middle" src="{% static 'images/up.jpg' %}" width="40" height="40">  <br>
+          <span style="font-size: 20px;">Send</span>
+        </div>
+        <!--<button class="button Btn" id="sendBtn" style="vertical-align:middle" data-toggle="modal" data-target="#sendModal"><span><img src="KITISU\up.jpg" width="40" height="40"> </span></button>-->
+        <!-- Modal Sell -->
+        <div id="sendModal" class="modal fade " style="background:transparent;box-shadow: none !important;-webkit-box-shadow:none !important;-moz-box-shadow:nonw !important;">
+          <div class="modal-content-send modal-content" style="width: 400px;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <p>SEND</p>
+            <form method="POST" action="{% url  'send' %}">
+              {% csrf_token %}
+            <div class="buydivmod">
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 20px">
+                  <p class="inner2" style="width: 50px;;">To</p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="number" style="border: 0px ; margin: 0px" class="inputtext" name="recp_addr" placeholder="Id" value="">
+                </div>
+              </div>  
+              <div class="money col-xs-12" style="border:1px solid #dfdcdb; padding: none;" >
+                <div class="inrbox col-xs-2" style="display: inline; margin-top: 10px;">
+                  <p class="inner1" style="width: 50px;">AMOUNT</p> 
+                  <p class="inner2" style="width: 50px; ">
+                    <span class="bitcoin">BITCOIN
+                      <input type="hidden" name="network" value="BTC">
+                    </span>
+                    <span class="litecoin" style="display: none;">LITECOIN
+                      <input type="hidden" name="network" value="LTC">
+                    </span>
+                    <span class="dash" style="display: none;">DASH
+                      
+                      <input type="hidden" name="network" value="DASH">
+                    </span>
+
+                  </p>
+                </div>
+                <div class="col-xs-8">
+                  <input type="text" style="border: 0px #dfdcdb; margin: 0px" class="inputtext" name="value" placeholder="0.0" >
+                </div>
+              </div>    
+              <button class="btnnew" height="40px" type="submit"><p class="sc-bwzfXH myXmC" style="color:#ffffff">SEND</p></button>
+            </div>
+          </form>
+          </div>
+      </div>
+        </div>
+      <div class="col imgup" style="margin-left: 100px">
+        <div style="text-align: center;" data-toggle="modal" data-target="#recieveModal">
+          <img class="Btn" style="transform:rotate(180deg);vertical-align:middle;" id="recieveBtn" src="{% static 'images/up.jpg' %}" width="40" height="40">  <br>
+          <span style="font-size: 20px;">Recieve</span>
+        </div>
+        <!--<button class="button Btn" id="recieveBtn" style="vertical-align:middle" data-toggle="modal" data-target="#recieveModal"><span>Receive </span> </button>-->
+      </div>
+      <!-- Modal Sell -->
+        <div id="recieveModal" class="modal fade"style="background:transparent;box-shadow: none !important;-webkit-box-shadow:none !important;-moz-box-shadow:nonw !important;" >
+          <div class="modal-content-receive modal-content" style="width: 400px;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <p>RECEIVE</p>
+            <div class="buydivmod"> 
+              <span class="bitcoin"><div id="btcqr" style="text-align: center; padding: 10px;"></div> </span>
+              <span class="litecoin" style="display: none;"><div id="ltcqr" style="text-align: center; padding: 10px;"></div> </span>
+              <span class="dash" style="display: none;"><div id="dashqr" style="text-align: center; padding: 10px;"></div> </span>
+              <span class="bitcoin"><font size="4">{{ btc_key }}</font> </span>
+              <span class="litecoin" style="display: none;"><font size="3">{{ ltc_key }}</font> </span>
+              <span class="dash" style="display: none;"><font size="4">{{ dash_key }}</font> </span>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s2">
+    <div class="row">
+      <div class="col" style="margin-right:40px">
+        <img src="https://www.poundsterlinglive.com/images/graphs/danske-bank-euro-exchange-rates.JPG" width="450" height="250">
+      </div>
+      <div class="col">
+        <img src="https://www.poundsterlinglive.com/images/graphs/danske-bank-euro-exchange-rates.JPG" width="450" height="250">
+      </div>
+    </div>
+  </div> 
+
+
+</div> 
+
+
+
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<!--include partials/footer -->
+<!--# </div>
+</main> -->
+
+
+<style type="text/css">
+  .w3-table {
+    border: 1px solid #ccc;
+    padding-left: 10px; 
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  tr{
+    padding-left: 10px; 
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  th{
+    padding-left: 10px; 
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  td{
+    border: 1px solid #ccc;
+    padding-left: 10px; 
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+</style>
+<div class="container2" class="center-align" style="display: none;">
+<div style="float: left;">
+<h4 >BITCOIN</h4>
+  <table class="w3-table w3-striped w3-border">
+    <tr>
+      <th>First </th>
+      <th>Second </th>
+      <th>Amount</th>
+    </tr>
+    <tr>
+      <td>xus</td>
+      <td>sada</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>sada</td>
+      <td>sdada</td>
+      <td>94</td>
+    </tr>
+    <tr>
+      <td>asda</td>
+      <td>Jsada</td>
+      <td>67</td>
+    </tr>
+  </table>
+
+</div>
+<div style="float: left;">
+<h4>LITECOIN</h4>
+  <table class="w3-table w3-striped w3-border">
+    <tr>
+      <th>First </th>
+      <th>Second </th>
+      <th>Amount</th>
+    </tr>
+    <tr>
+      <td>xus</td>
+      <td>sada</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>sada</td>
+      <td>sdada</td>
+      <td>94</td>
+    </tr>
+    <tr>
+      <td>asda</td>
+      <td>Jsada</td>
+      <td>67</td>
+    </tr>
+  </table>
+</div>
+<div style="float: left;">
+<h4>DASH</h4>
+  <table class="w3-table w3-striped w3-border">
+    <tr>
+      <th>First </th>
+      <th>Second </th>
+      <th>Amount</th>
+    </tr>
+    <tr>
+      <td>xus</td>
+      <td>sada</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>sada</td>
+      <td>sdada</td>
+      <td>94</td>
+    </tr>
+    <tr>
+      <td>asda</td>
+      <td>Jsada</td>
+      <td>67</td>
+    </tr>
+  </table>
+  </div>
+    </div>
+    
+
+
+</div>
+
+
+
+
+
+<footer class="panel-footer orange darken-3 " style="left: 0; bottom: 0 ;width: 100%;">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text"><a href="{%url 'index' %}" style="color: #FFFFFF">@2018 Rubit Tech.</a></h5>
+                <!--# <p class="grey-text text-lighten-4" style="text-align: left">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> -->
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <!--# <ul>
+                  <li><a class="grey-text text-lighten-3" href="/stories">Home Page</a></li>
+                  <li><a class="grey-text text-lighten-3" href="/about">About Page</a></li>
+                </ul> -->
+              </div>
+            </div>
+          </div>
+          <!--# <div class="footer-copyright">
+            <div class="container">
+            © 2018 KITISU Tech
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            </div>
+          </div> -->
+</footer>
+    </div>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function(req, res){
+    $(".button-collapse").sideNav();
+    $("select").material_select();
+  }); 
+
+  function openCity(evt, cityName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+  }
+
+  // Get the element with id="defaultOpen" and click on it
+  //document.getElementById("defaultOpen").click();
+</script>
+<!--dropdown script-->
+<script >
+  $(document).ready(function() {
+  $(".drop .option").click(function() {
+    var val = $(this).attr("data-value"),
+        $drop = $(".drop"),
+        prevActive = $(".drop .option.active").attr("data-value"),
+        options = $(".drop .option").length;
+    $drop.find(".option.active").addClass("mini-hack");
+    $drop.toggleClass("visible");
+    $drop.removeClass("withBG");
+    $(this).css("top");
+    $drop.toggleClass("opacity");
+    $(".mini-hack").removeClass("mini-hack");
+    if ($drop.hasClass("visible")) {
+      setTimeout(function() {
+        $drop.addClass("withBG");
+      }, 400 + options*100); 
+    }
+    triggerAnimation();
+    if (val !== "placeholder" || prevActive === "placeholder") {
+      $(".drop .option").removeClass("active");
+      $(this).addClass("active");
+    };
+  });
+  
+  function triggerAnimation() {
+    var finalWidth = $(".drop").hasClass("visible") ? 22 : 20;
+    $(".drop").css("width", "5em");
+    setTimeout(function() {
+      $(".drop").css("width", 5 + "em");
+    }, 400);
+  }
+});
+</script>
+<!--Qr code generation script-->
+<script>
+  var btc_qr = "{{ btc_key }}";
+  var ltc_qr = "{{ ltc_key }}";
+  var dash_qr = "{{ dash_key }}";
+ jQuery('#btcqr').qrcode(btc_qr);
+ jQuery('#ltcqr').qrcode(ltc_qr);
+ jQuery('#dashqr').qrcode(dash_qr);
+</script> 
+<!--coin and money select script-->
+<script>
+  var coin = "bitcoin";
+  var money = "inr";
+  $( "#bitcoin" ).click(function() {
+  	$('footer').css({position:'static'});
+    $(".container").show();
+    $(".mainbodycontent").show();
+    $(".bitcoin").show();
+
+    $(".litecoin").hide();
+    $(".dash").hide();
+    $(".container2").hide();
+    $(".transaction").hide(); 
+    coin = "bitcoin";
+  });
+    $( "#transaction" ).click(function() {
+    	var footer  = $('footer'),
+        footHgt = $('footer').outerHeight(),
+        bodyHgt = $('body').height();   
+
+    footer
+     .css({
+       position: 'absolute',
+       height:footHgt,
+       left: '0',
+       top: bodyHgt + 'px'
+     }); 
+
+    $(".container").show();
+    
+    $(".bitcoin").hide();
+
+    $(".litecoin").hide();
+    $(".dash").hide();
+    $(".mainbodycontent").hide();
+
+    $(".container2").show();
+    $(".transaction").show(); 
+    
+   
+  });
+
+$('#transactionss').click(function(){
+var footer  = $('footer'),
+        footHgt = $('footer').outerHeight(),
+        bodyHgt = $('body').height();   
+
+    footer
+     .css({
+       position: 'absolute',
+       height:footHgt,
+       left: '0',
+       top: bodyHgt + 'px'
+     }); 
+
+    $(".container").show();
+    
+    $(".bitcoin").hide();
+
+    $(".litecoin").hide();
+    $(".dash").hide();
+    $(".mainbodycontent").hide();
+
+    $(".container2").show();
+    $(".transaction").show(); 
+    
+});
+  $( "#litecoin" ).click(function() {
+  	$('footer').css({position:'static'});
+    $(".container").show();
+    $(".bitcoin").hide();
+    $(".litecoin").show();
+    $(".dash").hide();
+    $(".mainbodycontent").show();
+    $(".container2").hide();
+    $(".transaction").hide();
+    coin = "litecoin";
+  });
+  $( "#dash" ).click(function() {
+    $(".bitcoin").hide();
+    $('footer').css({position:'static'});
+    $(".container").show();
+    $(".litecoin").hide();
+    $(".mainbodycontent").show();
+    $(".container2").hide();
+    $(".dash").show();
+    $(".transaction").hide();
+    coin = "dash";
+  });
+    
+  $( "#inr" ).click(function() {
+    $(".inr").hide();
+    $(".container").show();
+    $(".dollar").hide();
+    $(".container2").hide();
+    $(".mainbodycontent").show();
+    $(".transaction").hide();
+    $(".euro").show();
+    $('footer').css({position:'static'});
+    money = "inr";
+  });
+  $( "#dollar" ).click(function() {
+    $(".inr").hide();
+    $(".container").show();
+    $(".transaction").hide();
+    $(".mainbodycontent").show();
+    $(".dollar").show();
+    $(".euro").hide();
+    $(".container2").hide();
+    money = "dollar";
+    $('footer').css({position:'static'});
+  });
+  $( "#euro" ).click(function() {
+    $(".inr").hide();
+    $(".container").show();
+    $(".mainbodycontent").show();
+    $(".dollar").hide();
+    $(".container2").hide();
+    $(".euro").show();
+    $(".transaction").hide();
+    money = "euro";
+    $('footer').css({position:'static'});
+  });
+
+$('transactionss').click(function(){
+
+});
+
+  // change amount according to value
+  var curbitcoin = 592362.23;
+  var curdash = 31853.62;
+  var curlitecoin = 11397.79; 
+  $("#buyamt").change(function(){ 
+    switch (coin) { 
+      case 'bitcoin': 
+        $("#buytotal").val() = $("#buyamt").val() * curbitcoin;
+        break;
+      case 'litecoin': 
+        $("#buytotal").val() = $("#buyamt").val() * curlitecoin;
+        break;
+      case 'dash': 
+        $("#buytotal").val() = $("#buyamt").val() * curdash;
+        break;     
+      default:
+        alert('error!!');
+    }
+    
+  });
+  $("#sellamt").change(function(){ 
+    switch (coin) { 
+      case 'bitcoin': 
+        $("#selltotal").val() = $("#sellamt").val() * curbitcoin;
+        break;
+      case 'litecoin': 
+        $("#selltotal").val() = $("#sellamt").val() * curlitecoin;
+        break;
+      case 'dash': 
+        $("#selltotal").val() = $("#sellamt").val() * curdash;
+        break;     
+      default:
+        alert('error!!');
+    }
+    
+  }); 
+  
+</script>
+<!-- Bitcoin Chart Widget -->
+ <script>
+  (function(b,i,t,C,O,I,N) {
+    window.addEventListener('load',function() {
+      if(b.getElementById(C))return;
+      I=b.createElement(i),N=b.getElementsByTagName(i)[0];
+      I.src=t;I.id=C;N.parentNode.insertBefore(I, N);
+    },false)
+
+  })(document,'script','https://widgets.bitcoin.com/widget.js','btcwdgt');
+   
+   var delay = 700; 
+setTimeout(function(){ $('.embed').remove(); }, delay);
+setTimeout(function(){ $('.logo').remove(); }, delay); 
+</script> 
+</body>
+
+</html>
+

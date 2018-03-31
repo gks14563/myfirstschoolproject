@@ -1,0 +1,27 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+
+<p style="" class="w3-center w3-large w3-hide-small"><b style="color:#ffffff">Aadhaar Pan Details (Only Admin)</b>
+</p>
+  <div class="w3-container" style="height: 100%" >
+
+<p>PAN</p>
+{% for u in user_pan %}
+{% if u %}
+<img src='/media/{{ u }}' height="240" width="240"> 
+{% endif %}
+{% endfor %}
+<br><br>
+<p> Aadhaar</p>
+
+{% for u in user_aadhaar %}
+{% if u %}
+<img src='/media/{{ u }}' height="240" width="240" >
+{% endif %}
+{% endfor %}
+
+   </div>
+
+
+{% endblock %}
