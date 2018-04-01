@@ -6,7 +6,6 @@ cfe==0.0.15
 chardet==3.0.4
 checkbox-support==0.22
 coinmarketcap==4.2.1
-command-not-found==0.3
 cryptography==1.2.3
 defer==1.0.6
 defusedxml==0.5.0
