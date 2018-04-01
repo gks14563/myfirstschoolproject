@@ -1,1 +1,1 @@
-web: gunicorn kitisu.wsgi
+web: gunicorn rubit_exchange.wsgi
