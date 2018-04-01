@@ -20,7 +20,7 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 's%8v(^fl5#(3b1_&4f!yuujjg%q3u*qw9rq=9bq_md0u_-ww-$'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'SOME+RANDOM+KEY(z9+3vnm(jb0u@&w68t#5_e8s9-lbfhv-')  
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -145,7 +145,8 @@ ACCOUNT_ACTIVATION_DAYS = 1
 EMAIL_HOST = 'smtp.zoho.com'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'no-reply@kitisu.com'
-EMAIL_HOST_PASSWORD = 'Examidea1'
+
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = 'no-reply@kitisu.com'
@@ -160,4 +161,3 @@ SESSION_SECURITY_INSECURE = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
