@@ -31,3 +31,4 @@ geoip2==2.7.0
 django-session-security==2.6.0
 coinmarketcap==4.2.1
 simplejson==3.13.2
+django-user-sessions
